@@ -87,7 +87,7 @@ $pm->start and next;
         print "#Want to kill job\n";
         if($temp){
             print "killing job\n";
-            `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"dpcheck\\\"|awk '{print \\\$2}'|xargs kill"`;
+            `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"dpcheck\\\"|awk '{print \\\$2}'|xargs kill -9"`;
         }
         else{
              print "No existing job currently!\n";
