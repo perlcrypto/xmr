@@ -35,7 +35,7 @@ my %nodes = (
      #State=IDLE
 #get current for the corresponding setting    
 my $ip = `/usr/sbin/ip a`;    
-$ip =~ /140\.117\.\d+\.(\d+)/;
+$ip =~ /1\d\d\.1\d\d\.\d+\.(\d+)/;
 my $cluster = $1;
 $cluster =~ s/^\s+|\s+$//;
 #print "\$cluster: $cluster\n";
